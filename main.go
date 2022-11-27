@@ -8,6 +8,7 @@ import (
 	"backup/utils"
 	"flag"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type Server struct {
@@ -24,24 +25,36 @@ func (server *Server) init() {
 }
 
 // IOValidation IO stuff, create everything related to config and give a sample if not exist as helper for the end user.
-func IOValidation(log logger.ColorLogger) bool {
-	if !utils.DirExists("config") {
-		if !utils.TouchDir("config") {
-			log.Warning("Unable to Create the config/ directory!")
-			return false
+func IOValidation(log logger.ColorLogger, conf *string) bool {
+	path := strings.Split(*conf, "/")
+	if len(path) == 0 {
+		log.Error("Invalid config path!")
+		return false
+	}
+
+	file := path[len(path)-1]
+	dirs := path[0 : len(path)-1]
+
+	for i, _ := range dirs {
+		tempPath := strings.Join(dirs[0:i+1], "/")
+		if !utils.DirExists(tempPath) {
+			if !utils.TouchDir(tempPath) {
+				log.Warning("Unable to Create the %s directory!", tempPath)
+				return false
+			}
 		}
 	}
 
-	if !utils.FileExists("config/config.json") {
-		if !utils.TouchFile("config/config.json") {
-			log.Warning("Unable to Create the config.json file!")
+	if !utils.FileExists(*conf) {
+		if !utils.TouchFile(*conf) {
+			log.Warning("Unable to Create the %s file!", file)
 			return false
 		}
-		cfg.CreateSample("config/config.json")
+		cfg.CreateSample(*conf)
 	}
 
-	if err := cfg.ReadConfig("config/config.json"); err != nil {
-		log.Warning("Unable to Read the config.json file!")
+	if err := cfg.ReadConfig(*conf); err != nil {
+		log.Warning("Unable to Read the %s file!", file)
 		return false
 	}
 
@@ -52,11 +65,12 @@ func IOValidation(log logger.ColorLogger) bool {
 // EX: ./backup -p 8888
 func main() {
 	var port = flag.String("p", "8462", "Service port")
+	var config = flag.String("c", "config/config.json", "Config file path")
 	flag.Parse()
 
 	log := logger.NewLogger("AUTO_BACKUP")
 
-	if !IOValidation(log) {
+	if !IOValidation(log, config) {
 		log.Critical("IO Error!")
 		return
 	}
