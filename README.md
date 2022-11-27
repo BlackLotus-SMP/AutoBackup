@@ -12,6 +12,7 @@ An API Based auto backup system using `rsync` and `sshpass`
 ./backup -p 8555 -c config.json
 ```
 `-p is optional`, **default port is 8462**
+
 `-c is optional`, **default config file is config/config.json**
 
 ## Endpoints
