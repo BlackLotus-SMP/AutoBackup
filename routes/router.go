@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"backup/cfg"
 	"backup/routes/endpoints"
 	"github.com/gin-gonic/gin"
 )
@@ -12,9 +13,11 @@ type Router interface {
 type Loader struct {
 }
 
-func (loader Loader) Load() []Router {
+func (loader Loader) Load(conf *cfg.Config) []Router {
 	healthcheck := new(endpoints.HealthCheck)
-	backup := new(endpoints.Backup)
+	backup := &endpoints.Backup{
+		Conf: conf,
+	}
 	return []Router{
 		healthcheck,
 		backup,

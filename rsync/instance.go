@@ -83,11 +83,10 @@ func (rs *Instance) zipAndRotate() {
 	}
 
 	target := fmt.Sprintf("%s_%s.zip", rs.server.Name, time.Now().Format("2006-01-02"))
-	out, err := exec.Command("tar", "-zcf", target, "-C", rs.server.LocalPath, ".").Output()
+	_, err = exec.Command("tar", "-zcf", target, "-C", rs.server.LocalPath, ".").Output()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(out)
 }
 
 // Stop kill the process.

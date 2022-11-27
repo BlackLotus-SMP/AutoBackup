@@ -9,9 +9,10 @@ An API Based auto backup system using `rsync` and `sshpass`
 ## Start
 
 ```bash
-./backup -p 8555
+./backup -p 8555 -c config.json
 ```
 `-p is optional`, **default port is 8462**
+`-c is optional`, **default config file is config/config.json**
 
 ## Endpoints
 
@@ -73,10 +74,13 @@ You can create as many json objects as you want
 
 # TODO
 
-- login with file (sshpass only now)
-- set config file as arg on run (./build -c config.json)
-- There is a bug in the build.sh file for freebsd builds
-- probably workflow to upload artifacts as release
-- endpoint to register/delete a config
-- unique config name validation
-- tests
+- [] login with file (sshpass only now)
+- [x] set config file as arg on run (./build -c config.json)
+- [] There is a bug in the build.sh file for freebsd builds
+- [] probably workflow to upload artifacts as release
+- [] endpoint to register/delete a config
+- [] unique config name validation
+- [] tests
+- [] capture error msg from rsync if happens
+- [x] refactor config logic
+- [] destination of the zip file (defaults to the folder where the command has been run)

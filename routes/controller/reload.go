@@ -6,6 +6,6 @@ import (
 )
 
 func (controller Backup) Reload(c *gin.Context) {
-	res := services.BackupReload.Reload()
+	res := services.BackupReload.Reload(controller.Conf)
 	c.AbortWithStatusJSON(res.Code, res)
 }

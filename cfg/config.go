@@ -1,12 +1,19 @@
 package cfg
 
 import (
+	"backup/logger"
+	"backup/utils"
 	"encoding/json"
 	"errors"
 	"os"
+	"strings"
 )
 
-var Servers []Server
+type Config struct {
+	configPath string
+	servers    []Server
+	logger     logger.ColorLogger
+}
 
 type Server struct {
 	Name          string `json:"name"`            // Unique name ID.
@@ -17,9 +24,56 @@ type Server struct {
 	NBackups      int    `json:"n_backups"`       // Number of maximum backups that can be stored.
 }
 
-// ReadConfig Reads and parses the config json file into an array of Server.
-func ReadConfig(path string) error {
-	data, err := os.ReadFile(path)
+func NewConfig(configPath string, logger logger.ColorLogger) (*Config, error) {
+	cfg := &Config{
+		configPath: configPath,
+		servers:    []Server{},
+		logger:     logger,
+	}
+	if !cfg.validatePaths() {
+		return cfg, errors.New("error on IO validation")
+	}
+	return cfg, nil
+}
+
+func (cfg *Config) validatePaths() bool {
+	path := strings.Split(cfg.configPath, "/")
+	if len(path) == 0 {
+		cfg.logger.Error("Invalid config path!")
+		return false
+	}
+
+	file := path[len(path)-1]
+	dirs := path[0 : len(path)-1]
+
+	for i := range dirs {
+		tempPath := strings.Join(dirs[0:i+1], "/")
+		if !utils.DirExists(tempPath) {
+			if !utils.TouchDir(tempPath) {
+				cfg.logger.Warning("Unable to Create the %s directory!", tempPath)
+				return false
+			}
+		}
+	}
+
+	if !utils.FileExists(cfg.configPath) {
+		if !utils.TouchFile(cfg.configPath) {
+			cfg.logger.Warning("Unable to Create the %s file!", file)
+			return false
+		}
+		cfg.createSample(cfg.configPath)
+	}
+
+	if err := cfg.ReadConfig(); err != nil {
+		cfg.logger.Warning("Unable to Read the %s file!", file)
+		return false
+	}
+
+	return true
+}
+
+func (cfg *Config) ReadConfig() error {
+	data, err := os.ReadFile(cfg.configPath)
 	if err != nil {
 		return err
 	}
@@ -30,14 +84,13 @@ func ReadConfig(path string) error {
 		return err
 	}
 
-	Servers = servers
-
+	cfg.servers = servers
 	return nil
 }
 
 // GetServer iterates the Server array to get the credentials of the server based on endpoint name.
-func GetServer(name string) (Server, error) {
-	for _, server := range Servers {
+func (cfg *Config) GetServer(name string) (Server, error) {
+	for _, server := range cfg.servers {
 		if server.Name == name {
 			return server, nil
 		}
@@ -46,8 +99,8 @@ func GetServer(name string) (Server, error) {
 }
 
 // CreateSample if the config json file does not exist, it will create a default one.
-func CreateSample(path string) {
-	Servers = []Server{
+func (cfg *Config) createSample(path string) {
+	cfg.servers = []Server{
 		{
 			Name:          "test",
 			SSHRemotePath: "1.2.3.4:/home/test/bck/",
@@ -57,7 +110,7 @@ func CreateSample(path string) {
 			NBackups:      5,
 		},
 	}
-	jsonString, err := json.MarshalIndent(Servers, "", "    ")
+	jsonString, err := json.MarshalIndent(cfg.servers, "", "    ")
 	if err != nil {
 		return
 	}

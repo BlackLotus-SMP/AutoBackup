@@ -10,8 +10,8 @@ import (
 type Create struct {
 }
 
-func (r Create) Create(name string) utils.Result {
-	server, err := cfg.GetServer(name)
+func (r Create) Create(name string, conf *cfg.Config) utils.Result {
+	server, err := conf.GetServer(name)
 	var res utils.Result
 	if err != nil {
 		res = utils.Result{Code: http.StatusInternalServerError, Data: err.Error()}
