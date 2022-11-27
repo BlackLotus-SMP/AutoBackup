@@ -76,7 +76,7 @@ You can create as many json objects as you want
 
 - [ ] login with file (sshpass only now)
 - [x] set config file as arg on run (./build -c config.json)
-- [ ] There is a bug in the build.sh file for freebsd builds
+- [ ] there is a bug in the build.sh file for freebsd builds
 - [ ] probably workflow to upload artifacts as release
 - [ ] endpoint to register/delete a config
 - [ ] unique config name validation
