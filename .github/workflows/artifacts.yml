@@ -1,4 +1,4 @@
-name: build
+name: artifacts
 on: [pull_request, push]
 jobs:
   build:
