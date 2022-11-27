@@ -2,12 +2,12 @@ package main
 
 import (
 	"backup/cfg"
+	"backup/logger"
 	"backup/routes"
 	"backup/rsync"
 	"backup/utils"
 	"flag"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 type Server struct {
@@ -24,23 +24,27 @@ func (server *Server) init() {
 }
 
 // IOValidation IO stuff, create everything related to config and give a sample if not exist as helper for the end user.
-func IOValidation() bool {
+func IOValidation(log logger.ColorLogger) bool {
 	if !utils.DirExists("config") {
 		if !utils.TouchDir("config") {
+			log.Warning("Unable to Create the config/ directory!")
 			return false
 		}
 	}
 
 	if !utils.FileExists("config/config.json") {
 		if !utils.TouchFile("config/config.json") {
+			log.Warning("Unable to Create the config.json file!")
 			return false
 		}
 		cfg.CreateSample("config/config.json")
 	}
-	err := cfg.ReadConfig("config/config.json")
-	if err != nil {
+
+	if err := cfg.ReadConfig("config/config.json"); err != nil {
+		log.Warning("Unable to Read the config.json file!")
 		return false
 	}
+
 	return true
 }
 
@@ -50,7 +54,12 @@ func main() {
 	var port = flag.String("p", "8462", "Service port")
 	flag.Parse()
 
-	IOValidation()
+	log := logger.NewLogger("AUTO_BACKUP")
+
+	if !IOValidation(log) {
+		log.Critical("IO Error!")
+		return
+	}
 
 	// Start the rsync scheduler.
 	rsync.RsyncExecutor = rsync.NewExecutor()
@@ -58,9 +67,11 @@ func main() {
 
 	server := Server{}
 	server.init()
+
+	log.Info("Starting 0.0.0.0:%s service", *port)
 	// Start the api router.
 	err := server.Router.Run("0.0.0.0:" + *port)
 	if err != nil {
-		log.Fatal(err)
+		log.Critical(err.Error())
 	}
 }
