@@ -36,7 +36,7 @@ for os in "${OSES[@]}"; do
 		suffix=".exe"
 	fi
 	env CGO_ENABLED=0 GOOS="$os" GOARCH=amd64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_"${os}"_amd64"${suffix}" ..
-	if $UPX; then upx -9 build_"${os}"_amd64"${suffix}" backup_"${os}"_amd64"${suffix}";fi
+	if $UPX; then upx -9 build_"${os}"_amd64"${suffix}";fi
 	tar -zcf backup-"${os}"-amd64-"${VERSION}".tar.gz build_"${os}"_amd64"${suffix}"
 	$sum backup-"${os}"-amd64-"${VERSION}".tar.gz
 done
@@ -50,7 +50,7 @@ for os in "${OSES[@]}"; do
 		suffix=".exe"
 	fi
 	env CGO_ENABLED=0 GOOS="$os" GOARCH=386 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_"${os}"_386"${suffix}" ..
-	if $UPX; then upx -9 build_"${os}"_386"${suffix}" backup_"${os}"_386"${suffix}";fi
+	if $UPX; then upx -9 build_"${os}"_386"${suffix}";fi
 	tar -zcf backup-"${os}"-386-"${VERSION}".tar.gz build_"${os}"_386"${suffix}"
 	$sum backup-"${os}"-386-"${VERSION}".tar.gz
 done
@@ -64,7 +64,7 @@ $sum backup-darwin-arm64-"${VERSION}".tar.gz
 ARMS=(5 6 7)
 for v in "${ARMS[@]}"; do
 	env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM="$v" go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_linux_arm"${v}" ..
-if $UPX; then upx -9 build_linux_arm"${v}" backup_linux_arm"${v}";fi
+if $UPX; then upx -9 build_linux_arm"${v}";fi
 tar -zcf backup-linux-arm"${v}"-"${VERSION}".tar.gz build_linux_arm"${v}"
 $sum backup-linux-arm"${v}"-"${VERSION}".tar.gz
 done
