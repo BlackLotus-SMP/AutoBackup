@@ -12,6 +12,7 @@ RUN upx backup
 FROM debian:10 AS runner
 
 WORKDIR /go/bin
+RUN apt update && apt install -y rsync sshpass
 EXPOSE 8088
 COPY --from=builder /go/src/app/backup /go/bin/backup
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8088/healthcheck
