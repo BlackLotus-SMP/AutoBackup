@@ -8,5 +8,5 @@ import (
 func (controller Backup) Create(c *gin.Context) {
 	name := c.Param("name")
 	res := services.BackupCreate.Create(name, controller.Conf)
-	c.AbortWithStatusJSON(res.Code, res)
+	c.IndentedJSON(res.Code, res)
 }
