@@ -79,3 +79,4 @@ You can create as many json objects as you want
 - probably workflow to upload artifacts as release
 - endpoint to register/delete a config
 - unique config name validation
+- tests
