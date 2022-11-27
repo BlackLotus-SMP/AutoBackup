@@ -2,7 +2,7 @@
 
 [![Build status](https://github.com/BlackLotus-SMP/AutoBackup/actions/workflows/build.yml/badge.svg)](https://github.com/BlackLotus-SMP/AutoBackup/actions/workflows/build.yml)
 
-An API Based auto backup system using `rsync` and `sshpass` (TODO login with file...)
+An API Based auto backup system using `rsync` and `sshpass`
 
 **rsync and sshpass needs to be installed**
 
