@@ -1,8 +1,6 @@
 name: release
 on:
   push:
-    tags:
-      - "v*.*"
     branches:
       - master
 jobs:
@@ -34,8 +32,10 @@ jobs:
       - name: Build
         run: ./build.sh
       - name: Upload
-        uses: AButler/upload-release-assets@v2.0
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          files: 'build/*'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: 0.8
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "latest"
+          files: |
+            build/*
