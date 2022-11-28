@@ -20,16 +20,19 @@ An API Based auto backup system using `rsync` and `sshpass`
 You probably want to use cron to schedule backups!
 
 ### Create
+- **method**: `GET`
 - **endpoint**: `/backup/create/{name}`
 - **command**: `curl 127.0.0.1:{port}/backup/create/{name}` (Read Config to understand what {name} is)
 - **run**: Will create a backup using rsync and zip with tar
 
 ### Reload
+- **method**: `GET`
 - **endpoint**: `/reload`
 - **command**: `curl 127.0.0.1:{port}/reload`
 - **run**: Will reload the config file so you don't need to restart the process on config modify
 
 ### HealthCheck
+- **method**: `GET`
 - **endpoint**: `/healthcheck`
 - **command**: `curl 127.0.0.1:{port}/healthcheck`
 - **run**: Just returns 200, this is for docker/kubernetes integration
