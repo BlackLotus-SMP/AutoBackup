@@ -102,10 +102,11 @@ You can create as many json objects as you want
 
 # TODO
 
+- [ ] check if sshpass and rsync are installed
 - [ ] login with file (sshpass only now)
 - [x] set config file as arg on run (./build -c config.json)
-- [ ] there is a bug in the build.sh file for freebsd builds
-- [ ] probably workflow to upload artifacts as release
+- [x] fix build.sh
+- [x] probably workflow to upload artifacts as release
 - [ ] endpoint to register/delete a config
 - [x] unique config name validation
 - [ ] tests

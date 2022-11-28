@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BUILD_DIR=$(dirname "$0")/build
-mkdir -p "$BUILD_DIR"
-cd "$BUILD_DIR" || exit
+DIR=$(dirname "$0")/build
+mkdir -p "$DIR"
+cd "$DIR" || exit
 
 sum="sha1sum"
 
@@ -15,6 +15,7 @@ if ! hash sha1sum 2>/dev/null; then
 		echo "Please install one of them!"
 		exit
 	fi
+	# shellcheck disable=SC2034
 	sum="shasum"
 fi
 
@@ -28,17 +29,14 @@ LDFLAGS="-X main.VERSION=$VERSION -s -w"
 GCFLAGS=""
 
 # AMD64
-OSES=(linux darwin windows freebsd)
+OSES=(linux darwin windows)
 for os in "${OSES[@]}"; do
 	suffix=""
 	if [ "$os" == "windows" ]
 	then
 		suffix=".exe"
 	fi
-	env CGO_ENABLED=0 GOOS="$os" GOARCH=amd64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_"${os}"_amd64"${suffix}" ..
-	if $UPX; then upx -9 build_"${os}"_amd64"${suffix}";fi
-	tar -zcf backup-"${os}"-amd64-"${VERSION}".tar.gz build_"${os}"_amd64"${suffix}"
-	$sum backup-"${os}"-amd64-"${VERSION}".tar.gz
+	env CGO_ENABLED=0 GOOS="$os" GOARCH=amd64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o "${os}"_amd64"${suffix}" ..
 done
 
 # 386
@@ -49,40 +47,23 @@ for os in "${OSES[@]}"; do
 	then
 		suffix=".exe"
 	fi
-	env CGO_ENABLED=0 GOOS="$os" GOARCH=386 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_"${os}"_386"${suffix}" ..
-	if $UPX; then upx -9 build_"${os}"_386"${suffix}";fi
-	tar -zcf backup-"${os}"-386-"${VERSION}".tar.gz build_"${os}"_386"${suffix}"
-	$sum backup-"${os}"-386-"${VERSION}".tar.gz
+	env CGO_ENABLED=0 GOOS="$os" GOARCH=386 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o "${os}"_386"${suffix}" ..
 done
 
 #Apple M1 device
-env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_darwin_arm64 ..
-tar -zcf backup-darwin-arm64-"${VERSION}".tar.gz build_darwin_arm64
-$sum backup-darwin-arm64-"${VERSION}".tar.gz
+env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o darwin_arm64 ..
 
 # ARM
 ARMS=(5 6 7)
 for v in "${ARMS[@]}"; do
-	env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM="$v" go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_linux_arm"${v}" ..
-if $UPX; then upx -9 build_linux_arm"${v}";fi
-tar -zcf backup-linux-arm"${v}"-"${VERSION}".tar.gz build_linux_arm"${v}"
-$sum backup-linux-arm"${v}"-"${VERSION}".tar.gz
+	env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM="$v" go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o linux_arm"${v}" ..
 done
 
 # ARM64
-env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_linux_arm64 ..
-if $UPX; then upx -9 build_linux_arm64;fi
-tar -zcf backup-linux-arm64-"${VERSION}".tar.gz build_linux_arm64
-$sum backup-linux-arm64-"${VERSION}".tar.gz
+env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o linux_arm64 ..
 
 # MIPS32LE
-env CGO_ENABLED=0 GOOS=linux GOARCH=mipsle GOMIPS=softfloat go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_linux_mipsle ..
-env CGO_ENABLED=0 GOOS=linux GOARCH=mips GOMIPS=softfloat go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o build_linux_mips ..
+env CGO_ENABLED=0 GOOS=linux GOARCH=mipsle GOMIPS=softfloat go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o linux_mipsle ..
+env CGO_ENABLED=0 GOOS=linux GOARCH=mips GOMIPS=softfloat go build -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o linux_mips ..
 
-if $UPX; then upx -9 build_linux_mips* backup_linux_mips*;fi
-tar -zcf backup-linux-mipsle-"${VERSION}".tar.gz build_linux_mipsle
-tar -zcf backup-linux-mips-"${VERSION}".tar.gz build_linux_mips
-$sum backup-linux-mipsle-"${VERSION}".tar.gz
-$sum backup-linux-mips-"${VERSION}".tar.gz
-
-rm -rf ./*.tar.gz
+if $UPX; then upx -9 *;fi
