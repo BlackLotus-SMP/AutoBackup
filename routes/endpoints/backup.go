@@ -20,4 +20,5 @@ func (rl Backup) Route(engine *gin.Engine) {
 	engine.GET("/reload", backupController.Reload)
 	backupRouter := engine.Group("/backup")
 	backupRouter.GET("/create/:name", backupController.Create)
+	backupRouter.GET("/list", backupController.List)
 }

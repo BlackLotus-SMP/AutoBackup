@@ -25,6 +25,24 @@ You probably want to use cron to schedule backups!
 - **command**: `curl 127.0.0.1:{port}/backup/create/{name}` (Read Config to understand what {name} is)
 - **run**: Will create a backup using rsync and zip with tar
 
+### List
+- **method**: `GET`
+- **endpoint**: `/backup/list`
+- **command**: `curl 127.0.0.1:{port}/backup/list`
+- **run**: Will list configs
+- **response**:
+```json
+        {
+            "code": 200,
+            "data": [
+                {
+                    "name": "test",
+                    "n_backups": 7
+                }
+            ]
+        }
+```
+
 ### Reload
 - **method**: `GET`
 - **endpoint**: `/reload`

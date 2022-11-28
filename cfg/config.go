@@ -36,6 +36,10 @@ func NewConfig(configPath string, logger logger.ColorLogger) (*Config, error) {
 	return cfg, nil
 }
 
+func (cfg *Config) GetServers() []Server {
+	return cfg.servers
+}
+
 func (cfg *Config) validatePaths() bool {
 	path := strings.Split(cfg.configPath, "/")
 	if len(path) == 0 {
