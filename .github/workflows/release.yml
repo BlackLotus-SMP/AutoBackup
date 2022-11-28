@@ -1,4 +1,4 @@
-name: artifacts
+name: release
 on:
   push:
     branches:
@@ -31,9 +31,8 @@ jobs:
         run: chmod +x ./build.sh
       - name: Build
         run: ./build.sh
-      - name: Capture Artifacts
-        if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v2
+      - name: upload
+        uses: AButler/upload-release-assets@v2.0
         with:
-          name: Artifacts
-          path: build/
+          files: build/*
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
