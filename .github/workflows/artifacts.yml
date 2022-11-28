@@ -1,5 +1,11 @@
 name: artifacts
-on: [pull_request, push]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 jobs:
   build:
     strategy:
