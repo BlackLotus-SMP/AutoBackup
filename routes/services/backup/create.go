@@ -10,7 +10,7 @@ import (
 type Create struct {
 }
 
-func (r Create) Create(name string, conf *cfg.Config) utils.Result {
+func (r Create) Create(name string, conf *cfg.Config, rsyncExecutor *rsync.Executor) utils.Result {
 	server, err := conf.GetServer(name)
 	var res utils.Result
 	if err != nil {
@@ -18,7 +18,7 @@ func (r Create) Create(name string, conf *cfg.Config) utils.Result {
 	} else {
 		res = utils.Result{Code: http.StatusOK, Data: "Starting backup!"}
 		backupInstance := rsync.NewRsyncInstance(server)
-		rsync.RsyncExecutor.StartInstance(backupInstance)
+		rsyncExecutor.StartInstance(backupInstance)
 	}
 	return res
 }

@@ -10,16 +10,17 @@ import (
 )
 
 type Server struct {
-	Router *gin.Engine
-	conf   *cfg.Config
+	router        *gin.Engine
+	conf          *cfg.Config
+	rsyncExecutor *rsync.Executor
 }
 
 func (server *Server) init() {
 	gin.SetMode(gin.ReleaseMode)
-	server.Router = gin.Default()
+	server.router = gin.Default()
 	var router = routes.Loader{}
-	for _, route := range router.Load(server.conf) {
-		route.Route(server.Router)
+	for _, route := range router.Load(server.conf, server.rsyncExecutor) {
+		route.Route(server.router)
 	}
 }
 
@@ -40,17 +41,18 @@ func main() {
 	}
 
 	// Start the rsync scheduler.
-	rsync.RsyncExecutor = rsync.NewExecutor()
-	rsync.RsyncExecutor.Start()
+	rsyncExecutor := rsync.NewExecutor()
+	rsyncExecutor.Start()
 
 	server := Server{
-		conf: conf,
+		conf:          conf,
+		rsyncExecutor: rsyncExecutor,
 	}
 	server.init()
 
 	log.Info("Starting 0.0.0.0:%s service", *port)
 	// Start the api router.
-	err = server.Router.Run("0.0.0.0:" + *port)
+	err = server.router.Run("0.0.0.0:" + *port)
 	if err != nil {
 		log.Critical(err.Error())
 	}

@@ -1,7 +1,11 @@
 package controller
 
-import "backup/cfg"
+import (
+	"backup/cfg"
+	"backup/rsync"
+)
 
 type Backup struct {
-	Conf *cfg.Config
+	Conf          *cfg.Config
+	RSyncExecutor *rsync.Executor
 }
