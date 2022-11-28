@@ -107,7 +107,7 @@ You can create as many json objects as you want
 - [ ] there is a bug in the build.sh file for freebsd builds
 - [ ] probably workflow to upload artifacts as release
 - [ ] endpoint to register/delete a config
-- [ ] unique config name validation
+- [x] unique config name validation
 - [ ] tests
 - [ ] capture error msg from rsync if happens
 - [x] refactor config logic

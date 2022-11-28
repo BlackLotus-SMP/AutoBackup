@@ -14,7 +14,7 @@ type List struct {
 }
 
 func (l List) List(conf *cfg.Config) utils.Result {
-	var parsedServers []ParsedServers
+	parsedServers := []ParsedServers{}
 	for _, server := range conf.GetServers() {
 		parsedServers = append(parsedServers, ParsedServers{
 			Name:     server.Name,

@@ -33,6 +33,7 @@ func NewConfig(configPath string, logger logger.ColorLogger) (*Config, error) {
 	if !cfg.validatePaths() {
 		return cfg, errors.New("error on IO validation")
 	}
+	cfg.validateServers()
 	return cfg, nil
 }
 
@@ -72,6 +73,21 @@ func (cfg *Config) validatePaths() bool {
 	return true
 }
 
+func (cfg *Config) validateServers() {
+	tempServerNames := []string{}
+	tempServers := []Server{}
+	for _, server := range cfg.servers {
+		if utils.Contains(tempServerNames, server.Name) {
+			cfg.logger.Error("Found duplicate server name \"%s\", this can't happen! Deleting", server.Name)
+			continue
+		}
+		tempServerNames = append(tempServerNames, server.Name)
+		tempServers = append(tempServers, server)
+	}
+	cfg.servers = tempServers
+	cfg.writeFile()
+}
+
 func (cfg *Config) ReadConfig() error {
 	data, err := os.ReadFile(cfg.configPath)
 	if err != nil {
@@ -99,15 +115,12 @@ func (cfg *Config) GetServer(name string) (Server, error) {
 }
 
 func (cfg *Config) DeleteServer(name string) error {
-	var tempServers []Server
+	tempServers := []Server{}
 	for _, server := range cfg.servers {
 		if server.Name == name {
 			continue
 		}
 		tempServers = append(tempServers, server)
-	}
-	if tempServers == nil {
-		tempServers = []Server{}
 	}
 	cfg.servers = tempServers
 	cfg.writeFile()

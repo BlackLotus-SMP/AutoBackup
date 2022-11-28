@@ -50,7 +50,7 @@ func main() {
 	}
 	server.init()
 
-	log.Info("Starting 0.0.0.0:%s service", *port)
+	log.Info("Starting 0.0.0.0:%s http service", *port)
 	// Start the api router.
 	err = server.router.Run("0.0.0.0:" + *port)
 	if err != nil {
