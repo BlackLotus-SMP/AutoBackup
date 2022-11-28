@@ -61,7 +61,7 @@ func (cfg *Config) validatePaths() bool {
 			cfg.logger.Warning("Unable to Create the %s file!", file)
 			return false
 		}
-		cfg.createSample(cfg.configPath)
+		cfg.createSample()
 	}
 
 	if err := cfg.ReadConfig(); err != nil {
@@ -98,8 +98,35 @@ func (cfg *Config) GetServer(name string) (Server, error) {
 	return Server{}, errors.New("server not found")
 }
 
+func (cfg *Config) DeleteServer(name string) error {
+	var tempServers []Server
+	for _, server := range cfg.servers {
+		if server.Name == name {
+			continue
+		}
+		tempServers = append(tempServers, server)
+	}
+	if tempServers == nil {
+		tempServers = []Server{}
+	}
+	cfg.servers = tempServers
+	cfg.writeFile()
+	return nil
+}
+
+func (cfg *Config) writeFile() {
+	jsonString, err := json.MarshalIndent(cfg.servers, "", "    ")
+	if err != nil {
+		return
+	}
+	err = os.WriteFile(cfg.configPath, jsonString, 0644)
+	if err != nil {
+		return
+	}
+}
+
 // CreateSample if the config json file does not exist, it will create a default one.
-func (cfg *Config) createSample(path string) {
+func (cfg *Config) createSample() {
 	cfg.servers = []Server{
 		{
 			Name:          "test",
@@ -110,12 +137,5 @@ func (cfg *Config) createSample(path string) {
 			NBackups:      5,
 		},
 	}
-	jsonString, err := json.MarshalIndent(cfg.servers, "", "    ")
-	if err != nil {
-		return
-	}
-	err = os.WriteFile(path, jsonString, 0644)
-	if err != nil {
-		return
-	}
+	cfg.writeFile()
 }

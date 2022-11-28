@@ -7,3 +7,4 @@ import (
 var BackupReload backup.Reload
 var BackupCreate backup.Create
 var BackupList backup.List
+var BackupDelete backup.Delete

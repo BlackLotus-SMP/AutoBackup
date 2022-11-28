@@ -43,6 +43,12 @@ You probably want to use cron to schedule backups!
         }
 ```
 
+### Delete
+- **method**: `GET`
+- **endpoint**: `/backup/delete/{name}`
+- **command**: `curl 127.0.0.1:{port}/backup/delete/{name}` (Read Config to understand what {name} is)
+- **run**: Will delete the json object from the config file
+
 ### Reload
 - **method**: `GET`
 - **endpoint**: `/reload`
@@ -81,7 +87,7 @@ You can create as many json objects as you want
 ]
 ```
 
-- **name**: name of the endpoint on /backup/create/{name} **must be unique**
+- **name**: name of the endpoint on /backup/{create/delete}/{name} **must be unique**
 - **ssh_remote_path**: path of the dir/file we want to make a backup of
 - **ssh_user**: ssh user
 - **ssh_pass**: ssh password

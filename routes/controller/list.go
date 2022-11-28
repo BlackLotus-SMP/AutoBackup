@@ -6,6 +6,6 @@ import (
 )
 
 func (controller Backup) List(c *gin.Context) {
-	res := services.BackupCreate.List(controller.Conf)
+	res := services.BackupList.List(controller.Conf)
 	c.IndentedJSON(res.Code, res)
 }

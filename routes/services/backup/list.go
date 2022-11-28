@@ -13,7 +13,7 @@ type ParsedServers struct {
 type List struct {
 }
 
-func (r Create) List(conf *cfg.Config) utils.Result {
+func (l List) List(conf *cfg.Config) utils.Result {
 	var parsedServers []ParsedServers
 	for _, server := range conf.GetServers() {
 		parsedServers = append(parsedServers, ParsedServers{

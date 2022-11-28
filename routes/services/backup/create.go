@@ -14,7 +14,7 @@ func (r Create) Create(name string, conf *cfg.Config, rsyncExecutor *rsync.Execu
 	server, err := conf.GetServer(name)
 	var res utils.Result
 	if err != nil {
-		res = utils.Result{Code: http.StatusInternalServerError, Data: err.Error()}
+		res = utils.Result{Code: http.StatusNotFound, Data: err.Error()}
 	} else {
 		res = utils.Result{Code: http.StatusOK, Data: "Starting backup!"}
 		backupInstance := rsync.NewRsyncInstance(server)
