@@ -45,15 +45,11 @@ func (cfg *Config) validatePaths() bool {
 
 	file := path[len(path)-1]
 	dirs := path[0 : len(path)-1]
+	dirPath := strings.Join(dirs, "/")
 
-	for i := range dirs {
-		tempPath := strings.Join(dirs[0:i+1], "/")
-		if !utils.DirExists(tempPath) {
-			if !utils.TouchDir(tempPath) {
-				cfg.logger.Warning("Unable to Create the %s directory!", tempPath)
-				return false
-			}
-		}
+	if !utils.DirExists(dirPath) && !utils.TouchDir(dirPath) {
+		cfg.logger.Warning("Unable to create %s!", dirPath)
+		return false
 	}
 
 	if !utils.FileExists(cfg.configPath) {

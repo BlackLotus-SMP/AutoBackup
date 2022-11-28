@@ -16,7 +16,7 @@ func FileExists(path string) bool {
 
 // TouchDir create dir.
 func TouchDir(path string) bool {
-	err := os.Mkdir(path, 0755)
+	err := os.MkdirAll(path, 0755)
 	return err == nil
 }
 
