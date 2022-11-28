@@ -1,7 +1,5 @@
 package rsync
 
-var RsyncExecutor *Executor
-
 // Executor structs that will contain the rsync instance manager.
 type Executor struct {
 	rManager *Manager
