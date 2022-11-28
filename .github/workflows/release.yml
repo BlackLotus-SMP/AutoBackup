@@ -33,11 +33,9 @@ jobs:
         run: chmod +x ./build.sh
       - name: Build
         run: ./build.sh
-        env:
-          BUILD_RELEASE: ${{ github.event.prerelease == false }}
       - name: Upload
         uses: AButler/upload-release-assets@v2.0
         with:
           files: 'build/*'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: ${{ github.ref_name }}
+          release-tag: 0.8
